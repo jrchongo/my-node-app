@@ -2,14 +2,14 @@ import {insertData} from '../database/crudRepository';
 import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
 const User = require('../models/db/userModel');
 
-export const createUser = async (data) => {
+export const createUser = async (serviceData) => {
     let responseObj = {};
 
     try {
         const user = new User({
-            name: data.name,
-            password: data.password,
-            phone: data.phone
+            name: serviceData.name,
+            password: serviceData.password,
+            phone: serviceData.phone
         });
         let data = {
             model: user

@@ -5,8 +5,6 @@ export const addUser = async (req, res, next) => {
     let responseObj = {};
     try {
         let data = req.body;
-        console.log('req.body', req.body);
-
         let responseFromService = await createUser(data);
 
         switch (responseFromService.status) {

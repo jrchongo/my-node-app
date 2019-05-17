@@ -7,7 +7,7 @@ export const databaseStatus = {
     DATABASE_ERROR: 'Database error'
 };
 
-export const controllStatue = {
+export const controllerStatus = {
     BAD_REQUEST: 'Required fields missing'
 };
 
