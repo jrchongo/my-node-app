@@ -6,3 +6,8 @@ export const createUserSchema = Joi.object().keys({
     password: Joi.string().required()
 });
 
+export const getUserListQuerySchema = Joi.object().keys({
+    skip: Joi.string().optional(),
+    limit: Joi.string().optional()
+}).and('skip', 'limit');
+

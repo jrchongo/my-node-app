@@ -15,7 +15,7 @@ export function createConnection() {
             return resolve(responseObj);
         });
     });
-};
+}
 
 export const insertData = (data) => {
     return new Promise((resolve, reject) => {
@@ -37,4 +37,24 @@ export const insertData = (data) => {
             console.log('Something went wrong: CrudRepository: insert data ', err);
         }
     })
-}
+};
+
+export const find = (data) => {
+    return new Promise((resolve, reject) => {
+        try {
+            data.model.find(data.query, data.excludeFields, data.pagination).then((docs) => {
+                resolve({
+                    result: docs,
+                    status: databaseStatus.ENTITY_FETCHED
+                });
+            }).catch(err => {
+                reject({
+                    error: err.message,
+                    status: databaseStatus.DATABASE_ERROR
+                });
+            });
+        } catch (err) {
+            console.log('Something went wrong: CrudRepository: find ', err);
+        }
+    })
+};

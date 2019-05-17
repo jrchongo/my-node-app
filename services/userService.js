@@ -1,4 +1,4 @@
-import {insertData} from '../database/crudRepository';
+import {insertData, find} from '../database/crudRepository';
 import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
 const User = require('../models/db/userModel');
 
@@ -29,6 +29,45 @@ export const createUser = async (serviceData) => {
 
     } catch (err) {
         console.log('Something went wrong: Service: create user: ', err);
+        return responseObj = errorResponseObject;
+    }
+};
+
+
+export const getUserList = async (serviceData) => {
+    let responseObj = {};
+
+    try {
+        let data = {
+            query: {},
+            model: User,
+            excludeFields: '-password -__v'
+        };
+
+        if(serviceData.skip && serviceData.limit) {
+            data.pagination = {
+                skip: parseInt(serviceData.skip),
+                limit: parseInt(serviceData.limit)
+            }
+        } else {
+            data.pagination = {}
+        }
+
+        let responseFromDatabase = await find(data);
+
+        switch (responseFromDatabase.status) {
+            case databaseStatus.ENTITY_FETCHED:
+                responseObj.body = responseFromDatabase.result;
+                responseObj.status = serviceStatus.USER_LIST_FETCHED_SUCCESSFULLY;
+                break;
+            default:
+                responseObj = errorResponseObject;
+                break;
+        }
+        return responseObj;
+
+    } catch (err) {
+        console.log('Something went wrong: Service: get user list: ', err);
         return responseObj = errorResponseObject;
     }
 };
