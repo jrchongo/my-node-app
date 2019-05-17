@@ -15,3 +15,14 @@ export const getUserDetailPathParamSchema = Joi.object().keys({
     userId: Joi.string().required()
 });
 
+export const updateUserDetailPathParamSchema = Joi.object().keys({
+    userId: Joi.strict().required()
+});
+
+export const updateUserSchema = Joi.object().keys({
+    name: Joi.string().optional(),
+    phone: Joi.number().optional(),
+    password: Joi.string().optional()
+});
+
+

@@ -1,9 +1,9 @@
-import {insertData, find} from '../database/crudRepository';
+import {insertData, find, findOneAndUpdate} from '../database/crudRepository';
 import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
 const User = require('../models/db/userModel');
 import mongoose from 'mongoose'
 
-export const createUser = async (serviceData) => {
+export const addUser = async (serviceData) => {
     let responseObj = {};
 
     try {
@@ -100,6 +100,48 @@ export const getUserDetail = async (serviceData) => {
 
     } catch (err) {
         console.log('Something went wrong: Service: get user detail: ', err);
+        return responseObj = errorResponseObject;
+    }
+};
+
+export const updateUserDetail = async (serviceData) => {
+    let responseObj = {};
+
+    try {
+        console.log(mongoose.Types.ObjectId(serviceData.userId));
+        let data = {
+            findQuery: {
+                _id: mongoose.Types.ObjectId(serviceData.userId)
+            },
+            model: User,
+            excludeFields: '',
+            updateQuery: {}
+        };
+
+        if(serviceData.name) {
+            data.updateQuery.name = serviceData.name
+        }
+        if(serviceData.password) {
+            data.updateQuery.password = serviceData.password
+        }git
+        if(serviceData.phone) {
+            data.updateQuery.phone = serviceData.phone
+        }
+
+        let responseFromDatabase = await findOneAndUpdate(data);
+        switch (responseFromDatabase.status) {
+            case databaseStatus.ENTITY_MODIFIED:
+                responseObj.body = responseFromDatabase.result;
+                responseObj.status = serviceStatus.USER_UPDATED_SUCCESSFULLY;
+                break;
+            default:
+                responseObj = errorResponseObject;
+                break;
+        }
+        return responseObj;
+
+    } catch (err) {
+        console.log('Something went wrong: Service: update user detail: ', err);
         return responseObj = errorResponseObject;
     }
 };

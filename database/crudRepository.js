@@ -58,3 +58,24 @@ export const find = (data) => {
         }
     })
 };
+
+
+export const findOneAndUpdate = (data) => {
+    return new Promise((resolve, reject) => {
+        try {
+            data.model.findOneAndUpdate(data.findQuery, data.updateQuery).then((docs) => {
+                resolve({
+                    result: docs,
+                    status: databaseStatus.ENTITY_MODIFIED
+                });
+            }).catch(err => {
+                reject({
+                    error: err.message,
+                    status: databaseStatus.DATABASE_ERROR
+                });
+            });
+        } catch (err) {
+            console.log('Something went wrong: CrudRepository: findOneAndUpdate ', err);
+        }
+    })
+};
