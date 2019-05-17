@@ -11,3 +11,7 @@ export const getUserListQuerySchema = Joi.object().keys({
     limit: Joi.string().optional()
 }).and('skip', 'limit');
 
+export const getUserDetailPathParamSchema = Joi.object().keys({
+    userId: Joi.string().required()
+});
+

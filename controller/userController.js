@@ -1,5 +1,5 @@
 import {errorResponseObject, serviceStatus} from '../constants/constants';
-import {createUser, getUserList} from '../services/userService';
+import {createUser, getUserList, getUserDetail} from '../services/userService';
 
 export const addUser = async (req, res, next) => {
     let responseObj = {};
@@ -53,4 +53,32 @@ export const fetchUserList = async (req, res, next) => {
         return res.status(responseObj.status).send(responseObj);
     }
 };
+
+export const fetchUserDetail = async (req, res, next) => {
+    let responseObj = {};
+    try {
+        let data = {
+            userId: req.params.userId
+        };
+        let responseFromService = await getUserDetail(data);
+
+        switch (responseFromService.status) {
+            case serviceStatus.USER_FETCHED_SUCCESSFULLY:
+                responseObj.status = 200;
+                responseObj.message = serviceStatus.USER_FETCHED_SUCCESSFULLY;
+                responseObj.body = responseFromService.body;
+                break;
+
+            default:
+                responseObj = errorResponseObject;
+                break;
+        }
+        return res.status(responseObj.status).send(responseObj)
+    } catch (err) {
+        console.log('Get user detail error ', err);
+        responseObj = errorResponseObject;
+        return res.status(responseObj.status).send(responseObj);
+    }
+};
+
 

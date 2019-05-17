@@ -1,6 +1,7 @@
 import {insertData, find} from '../database/crudRepository';
 import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
 const User = require('../models/db/userModel');
+import mongoose from 'mongoose'
 
 export const createUser = async (serviceData) => {
     let responseObj = {};
@@ -68,6 +69,37 @@ export const getUserList = async (serviceData) => {
 
     } catch (err) {
         console.log('Something went wrong: Service: get user list: ', err);
+        return responseObj = errorResponseObject;
+    }
+};
+
+export const getUserDetail = async (serviceData) => {
+    let responseObj = {};
+
+    try {
+        console.log(mongoose.Types.ObjectId(serviceData.userId));
+        let data = {
+            query: {
+                _id: mongoose.Types.ObjectId(serviceData.userId)
+            },
+            model: User,
+            excludeFields: ''
+        };
+
+        let responseFromDatabase = await find(data);
+        switch (responseFromDatabase.status) {
+            case databaseStatus.ENTITY_FETCHED:
+                responseObj.body = responseFromDatabase.result;
+                responseObj.status = serviceStatus.USER_FETCHED_SUCCESSFULLY;
+                break;
+            default:
+                responseObj = errorResponseObject;
+                break;
+        }
+        return responseObj;
+
+    } catch (err) {
+        console.log('Something went wrong: Service: get user detail: ', err);
         return responseObj = errorResponseObject;
     }
 };
