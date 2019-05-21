@@ -1,7 +1,10 @@
-import {insertData, find, findOneAndUpdate} from '../database/crudRepository';
-import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
-const User = require('../models/db/userModel');
 import mongoose from 'mongoose'
+import {insertData, find, findOneAndUpdate, deleteOne} from '../database/crudRepository';
+import {databaseStatus, errorResponseObject, serviceStatus} from '../constants/constants';
+import * as constants from "../constants/constants";
+import {sign} from 'jsonwebtoken';
+
+const User = require('../models/db/userModel');
 
 export const addUser = async (serviceData) => {
     let responseObj = {};
@@ -42,10 +45,10 @@ export const getUserList = async (serviceData) => {
         let data = {
             query: {},
             model: User,
-            excludeFields: '-password -__v'
+            excludeFields: '-__v'
         };
 
-        if(serviceData.skip && serviceData.limit) {
+        if (serviceData.skip && serviceData.limit) {
             data.pagination = {
                 skip: parseInt(serviceData.skip),
                 limit: parseInt(serviceData.limit)
@@ -118,13 +121,14 @@ export const updateUserDetail = async (serviceData) => {
             updateQuery: {}
         };
 
-        if(serviceData.name) {
+        if (serviceData.name) {
             data.updateQuery.name = serviceData.name
         }
-        if(serviceData.password) {
+        if (serviceData.password) {
             data.updateQuery.password = serviceData.password
-        }git
-        if(serviceData.phone) {
+        }
+        git
+        if (serviceData.phone) {
             data.updateQuery.phone = serviceData.phone
         }
 
@@ -142,6 +146,68 @@ export const updateUserDetail = async (serviceData) => {
 
     } catch (err) {
         console.log('Something went wrong: Service: update user detail: ', err);
+        return responseObj = errorResponseObject;
+    }
+};
+
+export const deleteUser = async (serviceData) => {
+    let responseObj = {};
+
+    try {
+        console.log(mongoose.Types.ObjectId(serviceData.userId));
+        let data = {
+            findQuery: {
+                _id: mongoose.Types.ObjectId(serviceData.userId)
+            },
+            model: User
+        };
+
+        let responseFromDatabase = await deleteOne(data);
+        switch (responseFromDatabase.status) {
+            case databaseStatus.ENTITY_DELETED:
+                responseObj.body = responseFromDatabase.result;
+                responseObj.status = serviceStatus.USER_DELETED_SUCCESSFULLY;
+                break;
+            default:
+                responseObj = errorResponseObject;
+                break;
+        }
+        return responseObj;
+
+    } catch (err) {
+        console.log('Something went wrong: Service: delete user: ', err);
+        return responseObj = errorResponseObject;
+    }
+};
+
+export const authenticateUser = async (serviceData) => {
+    let responseObj = {};
+
+    try {
+        let data = {
+            query: {
+                name: serviceData.name,
+                password: serviceData.password
+            },
+            model: User
+        };
+
+        let responseFromDatabase = await find(data);
+        if(responseFromDatabase.status === constants.databaseStatus.ENTITY_FETCHED && responseFromDatabase.result.length > 0) {
+            const token = sign({userTYpe: 'admin'}, process.env.SECRET_KEY);
+            responseObj.status = constants.serviceStatus.USER_AUTHENTICATED_SUCCESSFULLY;
+            responseObj.body = {
+                'token': token
+            }
+        } else {
+            responseObj.status = constants.serviceStatus.INVALID_CREDENTIALS;
+            responseObj.body = {}
+        }
+
+        return responseObj;
+
+    } catch (err) {
+        console.log('Something went wrong: Service: authenticate user: ', err);
         return responseObj = errorResponseObject;
     }
 };

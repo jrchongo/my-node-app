@@ -25,4 +25,14 @@ export const updateUserSchema = Joi.object().keys({
     password: Joi.string().optional()
 });
 
+export const deleteUserPathParamSchema = Joi.object().keys({
+    userId: Joi.string().required()
+});
+
+export const authenticateUserSchema = Joi.object().keys({
+    name: Joi.string().required(),
+    password: Joi.string().required()
+});
+
+
 

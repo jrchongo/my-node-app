@@ -7,7 +7,7 @@ export function createConnection() {
         mongoose.connect(process.env.DB_URL, {useNewUrlParser: true}, (err) => {
             if (err) {
                 responseObj.status = databaseStatus.DATABASE_ERROR;
-                console.log("Error: ", JSON.stringify(responseObj));
+                console.log("Error: ", JSON.stringify(err));
                 return reject(responseObj);
             }
             responseObj.status = databaseStatus.DATABASE_CONNECTED;
@@ -76,6 +76,26 @@ export const findOneAndUpdate = (data) => {
             });
         } catch (err) {
             console.log('Something went wrong: CrudRepository: findOneAndUpdate ', err);
+        }
+    })
+};
+
+export const deleteOne = (data) => {
+    return new Promise((resolve, reject) => {
+        try {
+            data.model.deleteOne(data.findQuery).then((docs) => {
+                resolve({
+                    result: docs,
+                    status: databaseStatus.ENTITY_DELETED
+                });
+            }).catch(err => {
+                reject({
+                    error: err.message,
+                    status: databaseStatus.DATABASE_ERROR
+                });
+            });
+        } catch (err) {
+            console.log('Something went wrong: CrudRepository: deleteOne ', err);
         }
     })
 };

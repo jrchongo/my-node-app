@@ -15,7 +15,10 @@ export const serviceStatus = {
     USER_CREATED_SUCCESSFULLY: 'User created successfully',
     USER_LIST_FETCHED_SUCCESSFULLY: 'User list fetched successfully',
     USER_FETCHED_SUCCESSFULLY: 'User fetched successfully',
-    USER_UPDATED_SUCCESSFULLY: 'User updated successfully'
+    USER_UPDATED_SUCCESSFULLY: 'User updated successfully',
+    USER_DELETED_SUCCESSFULLY: 'User deleted successfully',
+    USER_AUTHENTICATED_SUCCESSFULLY: 'User authenticated successfully',
+    INVALID_CREDENTIALS: 'Name or password is incorrect'
 };
 
 export const errorResponseObject = {
