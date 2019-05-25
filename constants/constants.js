@@ -8,7 +8,9 @@ export const databaseStatus = {
 };
 
 export const controllerStatus = {
-    BAD_REQUEST: 'Required fields missing'
+    BAD_REQUEST: 'Required fields missing',
+    TOKEN_MISSING: 'Token missing from header',
+    TOKEN_INVALID: 'Invalid token'
 };
 
 export const serviceStatus = {
